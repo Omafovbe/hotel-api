@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Model\RoomCapacityManager;
+use App\Model\RoomTypeManager;
 
 class RoomCapacityManagerController extends Controller
 {
@@ -11,13 +12,13 @@ class RoomCapacityManagerController extends Controller
      public function index()
     {
     	//All room capacities by name
-    	return RoomCapacityManager::all();
+    	return RoomCapacityManager::with('roomTypeManager')->get();;
     }
 
-    public function show(RoomCapacityManager $roomCapacityManager)
+    public function show($id)
     {
     	//Single room capacity
-    	return $roomCapacityManager;
+    	return RoomCapacityManager::where('id', '=', $id)->with('roomTypeManager')->first();
     }
 
     public function store(Request $request)
@@ -28,7 +29,15 @@ class RoomCapacityManagerController extends Controller
     	//Save to DB
     	$roomCapacityManager = RoomCapacityManager::create($request->only(['room_capacity_name']));
 
-    	$return response()->json(['message'=>'success', 'data'=>$roomTypeManager], 201);
+        /*
+            Sync the room capacity method on room type
+            This is possible if the room capacity ID is passed
+        */
+        //$roomTypeManagerID = $request->get('room_type_id');
+        //$roomTypeManager = new RoomTypeManager();
+        //$roomCapacityManager->roomTypeManager()->sync($roomTypeManagerID);
+
+    	return response()->json(['message'=>'success', 'data'=>$roomCapacityManager], 201);
     }
 
     public function update(Request $request, RoomCapacityManager $roomCapacityManager)
@@ -45,8 +54,8 @@ class RoomCapacityManagerController extends Controller
 
     public function destroy(RoomCapacityManager $roomCapacityManager)
     {
-    	//Delete a single room capacity type
-    	$roomTypeManager->delete()
+    	//Delete single room capacity type
+    	$roomCapacityManager->delete();
     	return response()->json([
             'message' => 'Deleted Successfully!'
         ], 204);

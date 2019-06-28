@@ -7,17 +7,21 @@ use App\Model\CustomerManager;
 
 class CustomerManagerController extends Controller
 {
-    //
-     public function index()
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
     {
     	//All Customers
     	return CustomerManager::all();
     }
 
-    public function show(CustomerManager $custManager)
+    public function show(CustomerManager $customerManager)
     {
     	//Single customer
-    	return $custManager;
+    	return $customerManager;
     }
 
     public function store(Request $request)
@@ -46,10 +50,11 @@ class CustomerManagerController extends Controller
     		'cust_email',
     ]));
 
-    	$return response()->json(['message'=>'success', 'data'=>$custManager], 201);
+    	return response()->json(['message'=>'success', 'data'=>$custManager], 201);
     }
 
-    public function update(Request $request, CustomerManager $custManager)
+
+    public function update(Request $request, $id)
     {
         //Validate entries
         $this->validate($request, [
@@ -60,22 +65,23 @@ class CustomerManagerController extends Controller
     		'cust_country' => 'required',
     		'cust_phone' => 'required',
     		'cust_fax' => 'nullable',
-    		'cust_email' => 'required|email|unique:customer_managers'
+    		'cust_email' => 'required|unique:customer_managers,cust_email,'.$id.',id',
     	]);
 
 
     	//Save to DB
-        $custManager->update($request->all());
+        $customerManager = CustomerManager::findOrFail($id);
 
-        return response()->json(['message'=>'updated successfuly', 'data' => $custManager], 200);
+        $customerManager->update($request->all());
+
+        return response()->json(['message'=>'updated successfuly', 'data' => $customerManager], 200);
     }
 
-    public function destroy(CustomerManager $custManager)
+    public function destroy(CustomerManager $customerManager)
     {
     	//Delete a single room type
-    	$custManager->delete()
+    	$customerManager->delete();
     	return response()->json([
-            'message' => 'Deleted Successfully!'
-        ], 204);
+    		'message' => 'Deleted Successfully!'], 204);
     }
 }

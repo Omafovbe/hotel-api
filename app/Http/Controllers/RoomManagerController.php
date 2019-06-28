@@ -25,7 +25,7 @@ class RoomManagerController extends Controller
     	//Validate entries
     	$this->validate($request, [
     		'room_name' => 'required',
-    		'hotel_id' => 'required'
+    		'hotel_id' => 'required',
     		'room_type_id' => 'required',
     		'room_capacity_id' => 'required',
     		'room_image' => 'required',
@@ -41,7 +41,7 @@ class RoomManagerController extends Controller
     		'room_image',
     	]));
 
-    	$return response()->json(['message'=>'success', 'data'=>$roomManager], 201);
+    	return response()->json(['message'=>'success', 'data'=>$roomManager], 201);
     }
 
     public function update(Request $request, RoomManager $roomManager)
@@ -49,7 +49,7 @@ class RoomManagerController extends Controller
         //Validate entries
         $this->validate($request, [
     		'room_name' => 'required',
-    		'hotel_id' => 'required'
+    		'hotel_id' => 'required',
     		'room_type_id' => 'required',
     		'room_capacity_id' => 'required',
     		'room_image' => 'required',
@@ -65,7 +65,7 @@ class RoomManagerController extends Controller
     public function destroy(RoomManager $roomManager)
     {
     	//Delete a single room info
-    	$roomManager->delete()
+    	$roomManager->delete();
     	return response()->json([
             'message' => 'Deleted Successfully!'
         ], 204);
